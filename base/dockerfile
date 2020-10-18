@@ -1,5 +1,7 @@
 FROM debian:stretch
 
+USER root
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -26,3 +28,6 @@ RUN apt-get update \
         yamllint \
     && useradd -ms /bin/bash builder \
     && echo "builder ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/builder
+
+USER builder
+WORKDIR /home/builder
