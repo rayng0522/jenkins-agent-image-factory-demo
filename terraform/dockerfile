@@ -1,9 +1,10 @@
 FROM prudential/generic-base:latest
 
+USER root
+
 ARG TERRAFORM_DOCS_VERSION="v0.10.1"
 ARG TFLINT_VERSION="v0.20.2"
-
-COPY .terraform_version /opt/
+ARG TERRAFOMR_VERSION="0.13.4"
 
 RUN apt-get update \
     && apt-get dist-upgrade -y \
@@ -19,7 +20,7 @@ RUN apt-get update \
     && curl -Lo /usr/local/bin/terraform-docs https://github.com/segmentio/terraform-docs/releases/download/${TERRAFORM_DOCS_VERSION}/terraform-docs-${TERRAFORM_DOCS_VERSION}-linux-amd64 \
     && chmod +x /usr/local/bin/terraform-docs \
     && cd /opt \
-    tfenv install
+    tfenv install ${TERRAFOMR_VERSION}
 
 USER builder
 WORKDIR /home/builder
