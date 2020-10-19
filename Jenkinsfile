@@ -34,8 +34,9 @@ spec:
     }
   }
   environment {
-    ACR_SERVER = 'prudentialray.azurecr.io'
+    ACR_SERVER      = 'prudentialray.azurecr.io'
     ANSIBLE_VERSION = '2.10.0'
+    AZURE_CLIENT    = credentials('azure-credential')
   }
   stages {
     stage('Build image') {
@@ -55,13 +56,25 @@ spec:
           steps {
             container('docker-builder') {
               dir('base') {
-                withCredentials([usernamePassword(credentialsId: 'azure-credential', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
-                  script {
-                    sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://$ACR_SERVER'
-                    def imageWithTag = "$ACR_SERVER/generic-base:latest"
-                    def image = docker.build imageWithTag
-                    image.push()
-                  }
+                script {
+                  sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
+                  def imageWithTag = "$ACR_SERVER/generic-base:latest"
+                  def image = docker.build imageWithTag
+                  image.push()
+                }
+              }
+            }
+          }
+        }
+        stage ('Terraform image') {
+          steps {
+            container('docker-builder') {
+              dir('terraform') {
+                script {
+                  sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
+                  def imageWithTag = "$ACR_SERVER/generic-base:latest"
+                  def image = docker.build imageWithTag
+                  image.push()
                 }
               }
             }
@@ -71,13 +84,11 @@ spec:
           steps {
             container('docker-builder') {
               dir('ansible') {
-                withCredentials([usernamePassword(credentialsId: 'azure-credential', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
-                  script {
-                    sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://$ACR_SERVER'
-                    def imageWithTag = "$ACR_SERVER/ansible:$ANSIBLE_VERSION"
-                    def image = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION .")
-                    image.push()
-                  }
+                script {
+                  sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
+                  def imageWithTag = "$ACR_SERVER/ansible:$ANSIBLE_VERSION"
+                  def image = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION .")
+                  image.push()
                 }
               }
             }
@@ -87,13 +98,11 @@ spec:
           steps {
             container('docker-builder') {
               dir('ansible') {
-                withCredentials([usernamePassword(credentialsId: 'azure-credential', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
-                  script {
-                    sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://$ACR_SERVER'
-                    def imageWithTag = "$ACR_SERVER/helper_script:${env.GIT_TAG}"
-                    def image = docker.build imageWithTag
-                    image.push()
-                  }
+                script {
+                  sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
+                  def imageWithTag = "$ACR_SERVER/helper_script:${env.GIT_TAG}"
+                  def image = docker.build imageWithTag
+                  image.push()
                 }
               }
             }
