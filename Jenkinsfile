@@ -12,11 +12,9 @@ metadata:
   labels:
     label: k8-pods
 spec:
-  imagePullSecrets:
-    - name: "aws-ecr-secret"
   containers:
   - name: deployer
-    image: 578612111946.dkr.ecr.ap-southeast-2.amazonaws.com/helm-aks-deployer:latest
+    image: hashicorp/terraform:latest
     command:
     - cat
     tty: true
