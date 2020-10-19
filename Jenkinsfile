@@ -75,7 +75,7 @@ spec:
                   script {
                     sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://$ACR_SERVER'
                     def imageWithTag = "$ACR_SERVER/ansible:${env.GIT_TAG}"
-                    def image = docker.build imageWithTag --build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION
+                    def image = docker.build imageWithTag "--build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION"
                     image.push()
                   }
                 }
