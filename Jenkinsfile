@@ -29,19 +29,18 @@ spec:
   }
   environment {
     ACR_SERVER = 'prudentialray.azurecr.io'
-    TAG_NUMBER = "latest"
   }
   stages {
-    stage('Deploy from master') {
+    stage('Build image') {
       stages {
-        stage ('build image') {
+        stage ('Generic image') {
           steps {
             container('docker-builder') {
               dir('base') {
                 withCredentials([usernamePassword(credentialsId: 'azure-credential', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
                   script {
                     sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://$ACR_SERVER'
-                    def imageWithTag = "$ACR_SERVER/generic-base:$TAG_NUMBER"
+                    def imageWithTag = "$ACR_SERVER/generic-base:latest"
                     def image = docker.build imageWithTag
                     image.push()
                   }
@@ -50,12 +49,19 @@ spec:
             }
           }
         }
-        stage('Terraform') {
+        stage('Terraform image') {
           steps {
             container('deployer') {
               dir('terraform') {
-                script {
-                  echo "hello world"
+                withCredentials([usernamePassword(credentialsId: 'azure-credential', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
+                  script {
+                    sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://$ACR_SERVER'
+                    def imageWithTag = "$ACR_SERVER/terraform:latest"
+                    def image = docker.build imageWithTag
+                    image.push()
+                    def gitTag = sh(returnStdout: true, script: "git tag --sort version:refname | tail -1").trim()
+                    echo "$gitTag"
+                  }
                 }
               }
             }
