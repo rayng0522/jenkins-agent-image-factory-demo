@@ -13,14 +13,8 @@ metadata:
     label: k8-pods
 spec:
   containers:
-  - name: deployer
-    image: hashicorp/terraform:latest
-    command:
-    - cat
-    tty: true
-    alwaysPullImage: true
   - name: "docker-builder"
-    image: "docker:18"
+    image: "docker:19"
     tty: true
     alwaysPullImage: true
     volumeMounts:
@@ -33,18 +27,23 @@ spec:
 """
     }
   }
+  environment {
+    ACR_SERVER = 'prudentialray.azurecr.io'
+  }
   stages {
     stage('Deploy from master') {
       stages {
         stage ('build image') {
           steps {
             container('docker-builder') {
-              dir('test-sample-crud-api') {
-                sh """
-                  apk add python py-pip
-                 """
-                script {
-                  echo "hello world"
+              dir('base') {
+                withCredentials([usernamePassword(credentialsId: azure-credential, usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]{
+                  sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://$env.ACR_SERVER'
+                  // build image
+                  def imageWithTag = "$env.ACR_SERVER/generic-base:$env.BUILD_NUMBER"
+                  def image = docker.build imageWithTag
+                  // push image
+                  image.push()
                 }
               }
             }
@@ -54,9 +53,9 @@ spec:
           steps {
             container('deployer') {
               dir('terraform') {
-                sh """
-                  ls
-                """
+                script {
+                  echo "hello world"
+                }
               }
             }
           }
