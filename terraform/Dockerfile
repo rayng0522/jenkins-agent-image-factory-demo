@@ -6,6 +6,8 @@ ARG TERRAFORM_DOCS_VERSION="v0.10.1"
 ARG TFLINT_VERSION="v0.20.2"
 ARG TERRAFOMR_VERSION="0.13.4"
 
+ENV ARM_PARTNER_ID="3492932"
+
 RUN apt-get update \
     && apt-get dist-upgrade -y \
     && apt-get clean \
