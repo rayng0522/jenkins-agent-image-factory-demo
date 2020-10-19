@@ -35,6 +35,7 @@ spec:
   }
   environment {
     ACR_SERVER = 'prudentialray.azurecr.io'
+    ANSIBLE_VERSION = '2.10.0'
   }
   stages {
     stage('Build image') {
@@ -74,7 +75,7 @@ spec:
                   script {
                     sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://$ACR_SERVER'
                     def imageWithTag = "$ACR_SERVER/ansible:${env.GIT_TAG}"
-                    def image = docker.build imageWithTag
+                    def image = docker.build imageWithTag --build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION
                     image.push()
                   }
                 }
