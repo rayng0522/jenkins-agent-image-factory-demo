@@ -1,4 +1,4 @@
-FROM prudential/generic-base:latest
+FROM prudentialray.azurecr.io/generic-base:latest
 
 USER root
 
