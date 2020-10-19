@@ -29,6 +29,7 @@ spec:
   }
   environment {
     ACR_SERVER = 'prudentialray.azurecr.io'
+    TAG_NUMBER = "latest"
   }
   stages {
     stage('Deploy from master') {
@@ -37,13 +38,13 @@ spec:
           steps {
             container('docker-builder') {
               dir('base') {
-                withCredentials([usernamePassword(credentialsId: azure-credential, usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]{
-                  sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://$env.ACR_SERVER'
-                  // build image
-                  def imageWithTag = "$env.ACR_SERVER/generic-base:$env.BUILD_NUMBER"
-                  def image = docker.build imageWithTag
-                  // push image
-                  image.push()
+                withCredentials([usernamePassword(credentialsId: 'azure-credential', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
+                  script {
+                    sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://$ACR_SERVER'
+                    def imageWithTag = "$ACR_SERVER/generic-base:$TAG_NUMBER"
+                    def image = docker.build imageWithTag
+                    image.push()
+                  }
                 }
               }
             }
