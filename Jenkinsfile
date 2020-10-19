@@ -102,7 +102,7 @@ spec:
         }
         stage('Helper-script image') {
           steps {
-            container('docker-builder') {s
+            container('docker-builder') {
               dir('helper-script') {
                 script {
                   def imageWithTag = "$ACR_SERVER/helper_script:${env.GIT_TAG}"
