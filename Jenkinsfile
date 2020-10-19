@@ -39,7 +39,7 @@ spec:
     AZURE_CLIENT    = credentials('azure-credential')
   }
   stages {
-    stage('Build image') {
+    stage('Jenkins agent container factory') {
       stages {
         stage('Git Tag') {
           steps {
@@ -52,12 +52,20 @@ spec:
             }
           }
         }
+        stage('Docker login') {
+          steps {
+            container('docker-builder') {
+              script {
+                sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
+              }
+            }
+          }
+        }
         stage ('Generic image') {
           steps {
             container('docker-builder') {
               dir('base') {
                 script {
-                  sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
                   def imageWithTag = "$ACR_SERVER/generic-base:latest"
                   def image = docker.build imageWithTag
                   image.push()
@@ -71,7 +79,6 @@ spec:
             container('docker-builder') {
               dir('terraform') {
                 script {
-                  sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
                   def imageWithTag = "$ACR_SERVER/generic-base:latest"
                   def image = docker.build imageWithTag
                   image.push()
@@ -85,7 +92,6 @@ spec:
             container('docker-builder') {
               dir('ansible') {
                 script {
-                  sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
                   def imageWithTag = "$ACR_SERVER/ansible:$ANSIBLE_VERSION"
                   def image = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION .")
                   image.push()
@@ -99,7 +105,6 @@ spec:
             container('docker-builder') {s
               dir('helper-script') {
                 script {
-                  sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
                   def imageWithTag = "$ACR_SERVER/helper_script:${env.GIT_TAG}"
                   def image = docker.build imageWithTag
                   image.push()
