@@ -51,7 +51,7 @@ spec:
         }
         stage('Terraform image') {
           steps {
-            container('deployer') {
+            container('docker-builder') {
               dir('terraform') {
                 withCredentials([usernamePassword(credentialsId: 'azure-credential', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
                   script {
