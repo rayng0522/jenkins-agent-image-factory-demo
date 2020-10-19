@@ -96,8 +96,8 @@ spec:
         }
         stage('Helper-script image') {
           steps {
-            container('docker-builder') {
-              dir('ansible') {
+            container('docker-builder') {s
+              dir('helper-script') {
                 script {
                   sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
                   def imageWithTag = "$ACR_SERVER/helper_script:${env.GIT_TAG}"
