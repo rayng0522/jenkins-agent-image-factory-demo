@@ -34,9 +34,9 @@ spec:
     }
   }
   environment {
-    DOCKER_REGISTRY_SERVER   = 'docker-rtsre-local.pruregistry.intranet.asia:8443'
-    ARTIFACTORY_USERNAME     = "SRVMYRHOCICD@prudential.com.my"
-    ARTIFACTORY_PASSWORD     = credentials('ARTI_SRVMYRHOCICD_RTSRE')
+    DOCKER_REGISTRY_SERVER   = 'docker-rtsre.registry.intranet.asia'
+    DOCKER_USERNAME          = "SRVMYRHOCICD@prudential.com.my"
+    DOCKER_PASSWORD          = credentials('ARTI_SRVMYRHOCICD_RTSRE')
     TERRAFORM_MINOR_VERSIONS = '0.11 0.12 0.13'
     ANSIBLE_VERSION          = '2.7.5 2.9.0 2.10.0'
     HTTP_PROXY               = 'http://10.163.39.77:8080'
@@ -61,7 +61,7 @@ spec:
           steps {
             container('docker-builder') {
               script {
-                sh 'docker login -u $ARTIFACTORY_USERNAME -p $ARTIFACTORY_PASSWORD https://$DOCKER_REGISTRY_SERVER'
+                sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD https://$DOCKER_REGISTRY_SERVER'
               }
             }
           }
