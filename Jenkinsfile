@@ -38,6 +38,9 @@ spec:
     DOCKER_CRED              = credentials('ARTI_SRVMYRHOCICD_RTSRE')
     TERRAFORM_MINOR_VERSIONS = '0.11 0.12 0.13'
     ANSIBLE_VERSION          = '2.7.5 2.9.0 2.10.0'
+    HTTP_PROXY               = 'http://10.163.39.77:8080'
+    HTTPS_PROXY              = 'http://10.163.39.77:8080'
+    NO_PROXY                 = 'intranet.asia,pru.intranet.asia'
   }
   stages {
     stage('Jenkins agent container factory') {
