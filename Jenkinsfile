@@ -35,7 +35,7 @@ spec:
   }
   environment {
     DOCKER_REGISTRY_SERVER   = 'docker-rtsre-local.pruregistry.intranet.asia:8443'
-    DOCKER_CRED              = credentials('ARTI_SRVMYRHOCICD_RTSRE')
+    DOCKER_CRED              = credentials('SRVHKRHOIRART17SDEV')
     TERRAFORM_MINOR_VERSIONS = '0.11 0.12 0.13'
     ANSIBLE_VERSION          = '2.7.5 2.9.0 2.10.0'
     HTTP_PROXY               = 'http://10.163.39.77:8080'
