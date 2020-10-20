@@ -37,6 +37,7 @@ spec:
     ACR_SERVER      = 'prudentialray.azurecr.io'
     ANSIBLE_VERSION = '2.10.0'
     AZURE_CLIENT    = credentials('azure-credential')
+    TERRAFORM_MINOR_VERSIONS = '0.11 0.12 0.13'
   }
   stages {
     stage('Jenkins agent container factory') {
@@ -79,7 +80,7 @@ spec:
             container('docker-builder') {
               dir('terraform') {
                 script {
-                  def imageWithTag = "$ACR_SERVER/generic-base:latest"
+                  def imageWithTag = "$ACR_SERVER/terraform:${env.GIT_TAG}"
                   def image = docker.build imageWithTag
                   image.push()
                 }
