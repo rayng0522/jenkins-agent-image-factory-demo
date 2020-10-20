@@ -34,8 +34,8 @@ spec:
     }
   }
   environment {
-    ACR_SERVER      = 'prudentialray.azurecr.io'
-    ANSIBLE_VERSION = '2.10.0'
+    ACR_SERVER      = 'docker-rtsre-local.pruregistry.intranet.asia:8443'
+    ANSIBLE_VERSION = '2.7.5 2.9.0 2.10.0'
     AZURE_CLIENT    = credentials('azure-credential')
     TERRAFORM_MINOR_VERSIONS = '0.11 0.12 0.13'
   }
