@@ -1,4 +1,4 @@
-FROM prudentialray.azurecr.io/generic-base:latest
+FROM docker-rtsre-local.pruregistry.intranet.asia:8443/generic-base:latest
 
 USER root
 

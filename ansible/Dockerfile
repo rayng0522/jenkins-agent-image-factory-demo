@@ -1,9 +1,9 @@
-FROM prudentialray.azurecr.io/generic-base:latest
+FROM docker-rtsre-local.pruregistry.intranet.asia:8443/generic-base:latest
 
 USER root
 
-ARG ANSIBLE_VERSION=2.10.0
-ARG ANSIBLE_LINT_VERSION=4.2.0
+ARG ANSIBLE_VERSIONS="2.7.5 2.10.0"
+ARG ANSIBLE_LINT_VERSION="4.2.0"
 
 RUN apt-get update \
     && apt-get dist-upgrade -y \
@@ -11,7 +11,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && pip3 --no-cache-dir install \
         cffi \
-        ansible==${ANSIBLE_VERSION} \
         ansible-lint==${ANSIBLE_LINT_VERSION} \
         pywinrm
 
@@ -20,6 +19,13 @@ RUN mkdir /ansible \
     && echo 'localhost' > /etc/ansible/hosts
 
 COPY ansible.cfg /etc/ansible/ansible.cfg
+
+RUN for ansible_version in $ANSIBLE_VERSIONS; do \
+        virtualenv --python=python3 ansible-$ansible_version; \
+        . ansible-$ansible_version/bin/activate; \
+        pip3 install ansible==$ansible_version; \
+        deactivate; \
+    done;
 
 USER builder
 WORKDIR /home/builder
