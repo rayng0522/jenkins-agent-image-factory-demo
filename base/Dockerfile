@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM python:3.8
 
 USER root
 
@@ -16,6 +16,7 @@ RUN apt-get update \
         python3-pip \
         python3-setuptools \
         python3-wheel \
+        virtualenv \
         openssh-client \
         software-properties-common \
         unzip \
