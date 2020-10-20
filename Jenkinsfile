@@ -34,10 +34,10 @@ spec:
     }
   }
   environment {
-    ACR_SERVER      = 'docker-rtsre-local.pruregistry.intranet.asia:8443'
-    ANSIBLE_VERSION = '2.7.5 2.9.0 2.10.0'
-    AZURE_CLIENT    = credentials('azure-credential')
+    DOCKER_REGISTRY_SERVER   = 'docker-rtsre-local.pruregistry.intranet.asia:8443'
+    DOCKER_CRED              = credentials('ARTI_SRVMYRHOCICD_RTSRE')
     TERRAFORM_MINOR_VERSIONS = '0.11 0.12 0.13'
+    ANSIBLE_VERSION          = '2.7.5 2.9.0 2.10.0'
   }
   stages {
     stage('Jenkins agent container factory') {
@@ -57,7 +57,7 @@ spec:
           steps {
             container('docker-builder') {
               script {
-                sh 'docker login -u $AZURE_CLIENT_USR -p $AZURE_CLIENT_PSW https://$ACR_SERVER'
+                sh 'docker login -u $DOCKER_CRED_USR -p $DOCKER_CRED_PSW https://$DOCKER_REGISTRY_SERVER'
               }
             }
           }
@@ -67,7 +67,7 @@ spec:
             container('docker-builder') {
               dir('base') {
                 script {
-                  def imageWithTag = "$ACR_SERVER/generic-base:latest"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/generic-base:latest"
                   def image = docker.build imageWithTag
                   image.push()
                 }
@@ -80,8 +80,8 @@ spec:
             container('docker-builder') {
               dir('terraform') {
                 script {
-                  def imageWithTag = "$ACR_SERVER/terraform:${env.GIT_TAG}"
-                  def image = docker.build imageWithTag
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/terraform:${env.GIT_TAG}"
+                  def image = docker.build(imageWithTag, "--build-arg TERRAFORM_MINOR_VERSIONS=$TERRAFORM_MINOR_VERSIONS .")
                   image.push()
                 }
               }
@@ -93,7 +93,7 @@ spec:
             container('docker-builder') {
               dir('ansible') {
                 script {
-                  def imageWithTag = "$ACR_SERVER/ansible:$ANSIBLE_VERSION"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/ansible:${env.GIT_TAG}"
                   def image = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION .")
                   image.push()
                 }
@@ -106,7 +106,7 @@ spec:
             container('docker-builder') {
               dir('helper-script') {
                 script {
-                  def imageWithTag = "$ACR_SERVER/helper_script:${env.GIT_TAG}"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/helper_script:${env.GIT_TAG}"
                   def image = docker.build imageWithTag
                   image.push()
                 }
