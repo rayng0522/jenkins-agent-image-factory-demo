@@ -5,11 +5,7 @@ USER root
 ARG ANSIBLE_VERSIONS="2.7.5 2.10.0"
 ARG ANSIBLE_LINT_VERSION="4.2.0"
 
-RUN apt-get update \
-    && apt-get dist-upgrade -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip3 --no-cache-dir install \
+RUN pip3 --no-cache-dir install \
         cffi \
         ansible-lint==${ANSIBLE_LINT_VERSION} \
         pywinrm

@@ -2,9 +2,6 @@ FROM docker-rtsre-local.pruregistry.intranet.asia:8443/jenkins-agent-base:latest
 
 USER root
 
-ARG http_proxy=''
-ARG https_proxy=''
-ARG no_proxy=''
 ARG TERRAFORM_DOCS_VERSION="v0.10.1"
 ARG TFLINT_VERSION="v0.20.2"
 ARG TERRAFORM_MINOR_VERSIONS="0.11 0.12 0.13"
