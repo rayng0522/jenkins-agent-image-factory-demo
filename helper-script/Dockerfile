@@ -6,8 +6,8 @@ ARG http_proxy
 ARG https_proxy
 ARG no_proxy
 ARG PS_VERSION=7.0.0
-ARG PS_PACKAGE=powershell-lts_7.0.0-1.debian.9_amd64.deb
-ARG PS_PACKAGE_URL=https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/powershell-lts_7.0.0-1.debian.9_amd64.deb
+ARG PS_PACKAGE=powershell-lts_7.0.0-1.debian.10_amd64.deb
+ARG PS_PACKAGE_URL=https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/powershell-lts_7.0.0-1.debian.10_amd64.deb
 
 # Define ENVs for Localization/Globalization
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
@@ -15,7 +15,7 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LANG=en_US.UTF-8 \
     # set a fixed location for the Module analysis cache
     PSModuleAnalysisCachePath=/var/cache/microsoft/powershell/PSModuleAnalysisCache/ModuleAnalysisCache \
-    POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-Debian-9
+    POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-Debian-10
 
 RUN apt-get update \
     # Download the Linux package and save it
