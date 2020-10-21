@@ -1,4 +1,4 @@
-FROM docker-release.pruregistry.intranet.asia:8443/jenkins-agent-base:latest
+FROM docker-rtsre-local.pruregistry.intranet.asia:8443/jenkins-agent-base:latest
 
 USER root
 
