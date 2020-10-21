@@ -2,9 +2,9 @@ FROM docker-rtsre-local.pruregistry.intranet.asia:8443/jenkins-agent-base:latest
 
 USER root
 
-ARG http_proxy=''
-ARG https_proxy''
-ARG no_proxy''
+ARG http_proxy
+ARG https_proxy
+ARG no_proxy
 ARG PS_VERSION=7.0.0
 ARG PS_PACKAGE=powershell-lts_7.0.0-1.debian.9_amd64.deb
 ARG PS_PACKAGE_URL=https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/powershell-lts_7.0.0-1.debian.9_amd64.deb
@@ -20,7 +20,7 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
 RUN apt-get update \
     # Download the Linux package and save it
     && echo ${PS_PACKAGE_URL} \
-    && curl -sSL ${PS_PACKAGE_URL} -o /tmp/powershell.deb \
+    && curl -sSL -x '' ${PS_PACKAGE_URL} -o /tmp/powershell.deb \
     && apt-get install --no-install-recommends -y /tmp/powershell.deb \
     && apt-get dist-upgrade -y \
     && apt-get clean \
@@ -46,7 +46,5 @@ RUN apt-get update \
           }"
 
 USER builder
-
-RUN pwsh -c "Install-Module PSScriptAnalyzer -Force; Invoke-ScriptAnalyzer -ScriptDefinition 'gci'"
 
 WORKDIR /home/builder
