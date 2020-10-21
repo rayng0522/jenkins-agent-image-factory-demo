@@ -42,6 +42,8 @@ spec:
     NO_PROXY                 = 'intranet.asia,pru.intranet.asia'
     TERRAFORM_MINOR_VERSIONS = '0.11 0.12 0.13'
     ANSIBLE_VERSION          = '2.7.5 2.9.0 2.10.0'
+    PS_VERSION               = '7.0.0'
+
   }
   stages {
     stage('Jenkins agent container factory') {
@@ -111,7 +113,7 @@ spec:
               dir('helper-script') {
                 script {
                   def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-pwsh:${env.GIT_TAG}"
-                  def image = docker.build(imageWithTag, "--build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
+                  def image = docker.build(imageWithTag, "--build-arg PS_VERSIONS=$PS_VERSIONS --build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
                   image.push()
                 }
               }
