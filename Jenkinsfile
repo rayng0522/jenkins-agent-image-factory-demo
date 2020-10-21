@@ -72,7 +72,7 @@ spec:
               dir('base') {
                 script {
                   def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-base:latest"
-                  def image = docker.build imageWithTag
+                  def image = docker.build(imageWithTag, "--build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
                   image.push()
                 }
               }

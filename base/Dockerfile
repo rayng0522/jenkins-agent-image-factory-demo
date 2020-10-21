@@ -1,5 +1,9 @@
 FROM python:3.8
 
+ARG http_proxy
+ARG https_proxy
+ARG no_proxy
+
 USER root
 
 RUN apt-get update \
