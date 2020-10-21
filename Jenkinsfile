@@ -35,7 +35,7 @@ spec:
   }
   environment {
     DOCKER_REGISTRY_SERVER   = 'docker-release.pruregistry.intranet.asia:8443'
-    DOCKER_USERNAME          = "SRVMYRHOCICD"
+    DOCKER_USERNAME          = "SRVMYRHOCICD@prudential.com.my"
     DOCKER_PASSWORD          = credentials('ARTI_SRVMYRHOCICD_RTSRE')
     HTTP_PROXY               = 'http://10.163.39.77:8080'
     HTTPS_PROXY              = 'http://10.163.39.77:8080'
