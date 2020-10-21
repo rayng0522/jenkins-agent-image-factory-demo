@@ -71,7 +71,22 @@ spec:
             container('docker-builder') {
               dir('base') {
                 script {
-                  echo "hello"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-base:latest"
+                  def image = docker.build(imageWithTag, "--build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
+                  image.push()
+                }
+              }
+            }
+          }
+        }
+        stage('Ansible image') {
+          steps {
+            container('docker-builder') {
+              dir('ansible') {
+                script {
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-ansible:${env.GIT_TAG}"
+                  def image = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=\"$ANSIBLE_VERSION\" .")
+                  image.push()
                 }
               }
             }
@@ -85,17 +100,6 @@ spec:
                   def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-terraform:${env.GIT_TAG}"
                   def image = docker.build(imageWithTag, "--build-arg TERRAFORM_MINOR_VERSIONS=\"$TERRAFORM_MINOR_VERSIONS\" .")
                   image.push()
-                }
-              }
-            }
-          }
-        }
-        stage('Ansible image') {
-          steps {
-            container('docker-builder') {
-              dir('ansible') {
-                script {
-                  echo "hello"
                 }
               }
             }
