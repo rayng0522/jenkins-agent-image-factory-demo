@@ -85,7 +85,7 @@ spec:
               dir('terraform') {
                 script {
                   def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-terraform:${env.GIT_TAG}"
-                  def image = docker.build(imageWithTag, "--build-arg TERRAFORM_MINOR_VERSIONS=$TERRAFORM_MINOR_VERSIONS .")
+                  def image = docker.build(imageWithTag, "--build-arg TERRAFORM_MINOR_VERSIONS=\"$TERRAFORM_MINOR_VERSIONS\" .")
                   image.push()
                 }
               }
@@ -98,7 +98,7 @@ spec:
               dir('ansible') {
                 script {
                   def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-ansible:${env.GIT_TAG}"
-                  def image = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION .")
+                  def image = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=\"$ANSIBLE_VERSION\" .")
                   image.push()
                 }
               }
