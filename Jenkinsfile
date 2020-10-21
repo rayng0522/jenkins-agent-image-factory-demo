@@ -41,9 +41,8 @@ spec:
     HTTPS_PROXY              = 'http://10.163.39.77:8080'
     NO_PROXY                 = 'intranet.asia,pru.intranet.asia'
     TERRAFORM_MINOR_VERSIONS = '0.11 0.12 0.13'
-    ANSIBLE_VERSION          = '2.7.5 2.9.0 2.10.0'
-    PS_VERSION               = '7.0.0'
-
+    ANSIBLE_VERSION          = '2.7.5 2.8.0 2.9.0 2.10.0'
+    PS_VERSION               = '7.0.1'
   }
   stages {
     stage('Jenkins agent container factory') {
@@ -52,7 +51,7 @@ spec:
           steps {
             container('git') {
               script {
-                def gitTag = sh(returnStdout: true, script: "git tag --sort version:refname | tail -1").trim()
+                def gitTag  = sh(returnStdout: true, script: "git tag --sort version:refname | tail -1").trim()
                 env.GIT_TAG = gitTag
                 echo "${env.GIT_TAG}"
               }
@@ -74,7 +73,7 @@ spec:
               dir('base') {
                 script {
                   def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-base:latest"
-                  def image = docker.build(imageWithTag, "--build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
+                  def image        = docker.build(imageWithTag, "--build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
                   image.push()
                 }
               }
@@ -87,7 +86,7 @@ spec:
               dir('ansible') {
                 script {
                   def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-ansible:${env.GIT_TAG}"
-                  def image = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=\"$ANSIBLE_VERSION\" .")
+                  def image        = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=\"$ANSIBLE_VERSION\" .")
                   image.push()
                 }
               }
@@ -100,7 +99,7 @@ spec:
               dir('terraform') {
                 script {
                   def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-terraform:${env.GIT_TAG}"
-                  def image = docker.build(imageWithTag, "--build-arg TERRAFORM_MINOR_VERSIONS=\"$TERRAFORM_MINOR_VERSIONS\" .")
+                  def image        = docker.build(imageWithTag, "--build-arg TERRAFORM_MINOR_VERSIONS=\"$TERRAFORM_MINOR_VERSIONS\" .")
                   image.push()
                 }
               }
@@ -113,7 +112,7 @@ spec:
               dir('helper-script') {
                 script {
                   def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-pwsh:$PS_VERSION"
-                  def image = docker.build(imageWithTag, "--build-arg PS_VERSIONS=$PS_VERSION --build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
+                  def image        = docker.build(imageWithTag, "--build-arg PS_VERSIONS=$PS_VERSION --build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
                   image.push()
                 }
               }
