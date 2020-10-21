@@ -1,14 +1,13 @@
 FROM docker-rtsre-local.pruregistry.intranet.asia:8443/jenkins-agent-base:latest
 
-ARG http_proxy
-ARG https_proxy
-ARG no_proxy
-
 USER root
 
+ARG http_proxy=''
+ARG https_proxy''
+ARG no_proxy''
 ARG PS_VERSION=7.0.0
-ARG PS_PACKAGE=powershell-lts_${PS_VERSION}-1.debian.9_amd64.deb
-ARG PS_PACKAGE_URL=https://github.com/PowerShell/PowerShell/releases/download/v${PS_VERSION}/${PS_PACKAGE}
+ARG PS_PACKAGE=powershell-lts_7.0.0-1.debian.9_amd64.deb
+ARG PS_PACKAGE_URL=https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/powershell-lts_7.0.0-1.debian.9_amd64.deb
 
 # Define ENVs for Localization/Globalization
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
