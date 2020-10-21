@@ -1,5 +1,9 @@
 FROM docker-rtsre-local.pruregistry.intranet.asia:8443/jenkins-agent-base:latest
 
+ARG http_proxy
+ARG https_proxy
+ARG no_proxy
+
 USER root
 
 ARG PS_VERSION=7.0.0
