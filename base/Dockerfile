@@ -4,6 +4,10 @@ ARG http_proxy
 ARG https_proxy
 ARG no_proxy
 
+ENV HTTP_PROXY=$http_proxy
+ENV HTTPS_PROXY=$https_proxy
+ENV NO_PROXY=$no_prox
+
 USER root
 
 RUN apt-get update \
