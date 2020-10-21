@@ -71,7 +71,7 @@ spec:
             container('docker-builder') {
               dir('base') {
                 script {
-                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/generic-base:latest"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-base:latest"
                   def image = docker.build imageWithTag
                   image.push()
                 }
@@ -84,7 +84,7 @@ spec:
             container('docker-builder') {
               dir('terraform') {
                 script {
-                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/terraform:${env.GIT_TAG}"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-terraform:${env.GIT_TAG}"
                   def image = docker.build(imageWithTag, "--build-arg TERRAFORM_MINOR_VERSIONS=$TERRAFORM_MINOR_VERSIONS .")
                   image.push()
                 }
@@ -97,7 +97,7 @@ spec:
             container('docker-builder') {
               dir('ansible') {
                 script {
-                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/ansible:${env.GIT_TAG}"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-ansible:${env.GIT_TAG}"
                   def image = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION .")
                   image.push()
                 }
@@ -110,7 +110,7 @@ spec:
             container('docker-builder') {
               dir('helper-script') {
                 script {
-                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/helper_script:${env.GIT_TAG}"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-pwsh:${env.GIT_TAG}"
                   def image = docker.build imageWithTag
                   image.push()
                 }
