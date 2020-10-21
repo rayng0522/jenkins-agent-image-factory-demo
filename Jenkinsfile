@@ -112,8 +112,8 @@ spec:
             container('docker-builder') {
               dir('helper-script') {
                 script {
-                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-pwsh:${env.GIT_TAG}"
-                  def image = docker.build(imageWithTag, "--build-arg PS_VERSIONS=$PS_VERSIONS --build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-pwsh:$PS_VERSION"
+                  def image = docker.build(imageWithTag, "--build-arg PS_VERSIONS=$PS_VERSION --build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
                   image.push()
                 }
               }
