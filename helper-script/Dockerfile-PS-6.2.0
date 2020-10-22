@@ -1,23 +1,40 @@
-FROM docker-rtsre-local.pruregistry.intranet.asia:8443/jenkins-agent-base:latest
+# Docker image file that describes an Debian 9 image with PowerShell installed from Microsoft APT Repo
+ARG fromTag=stretch-slim
+ARG imageRepo=debian
 
-USER root
+FROM ${imageRepo}:${fromTag} AS installer-env
 
+# Define proxy
 ARG http_proxy
 ARG https_proxy
 ARG no_proxy
-ARG PS_VERSION=7.0.0
-ARG PS_PACKAGE=powershell-lts_${PS_VERSION}-1.debian.10_amd64.deb
-ARG PS_PACKAGE_URL=https://github.com/PowerShell/PowerShell/releases/download/v${PS_VERSION}/powershell-lts_${PS_VERSION}-1.debian.10_amd64.deb
+
+# Define Args for the needed to add the package
+ARG PS_VERSION=6.2.0
+ARG PS_PACKAGE=powershell_${PS_VERSION}-1.debian.9_amd64.deb
+ARG PS_PACKAGE_URL=https://github.com/PowerShell/PowerShell/releases/download/v${PS_VERSION}/${PS_PACKAGE}
 
 # Define ENVs for Localization/Globalization
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
     # set a fixed location for the Module analysis cache
-    PSModuleAnalysisCachePath=/var/cache/microsoft/powershell/PSModuleAnalysisCache/ModuleAnalysisCache \
-    POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-Debian-10
+    PSModuleAnalysisCachePath=/var/cache/microsoft/powershell/PSModuleAnalysisCache/ModuleAnalysisCache
 
+# Install dependencies and clean up
 RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+    # curl is required to grab the Linux package
+        curl \
+    # less is required for help in powershell
+        less \
+    # requied to setup the locale
+        locales \
+    # required for SSL
+        ca-certificates \
+        gss-ntlmssp \
+    # PowerShell remoting over SSH dependencies
+        openssh-client \
     # Download the Linux package and save it
     && echo ${PS_PACKAGE_URL} \
     && curl -sSL -x '' ${PS_PACKAGE_URL} -o /tmp/powershell.deb \
@@ -44,6 +61,10 @@ RUN apt-get update \
             Write-Host "'Waiting for $env:PSModuleAnalysisCachePath'" ; \
             Start-Sleep -Seconds 6 ; \
           }"
+
+
+RUN useradd -ms /bin/bash builder \
+    && echo "builder ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/builder
 
 USER builder
 
