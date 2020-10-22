@@ -47,4 +47,6 @@ RUN apt-get update \
 
 USER builder
 
+RUN pwsh -c "Install-Module PSScriptAnalyzer -Force; Invoke-ScriptAnalyzer -ScriptDefinition 'gci'"
+
 WORKDIR /home/builder
