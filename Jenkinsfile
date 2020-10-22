@@ -105,7 +105,7 @@ spec:
             container('docker-builder') {
               dir('helper-script') {
                 script {
-                def ps_versions = $PS_VERSIONS.split(' ')
+                def ps_versions = ${PS_VERSIONS}.split(' ')
                   for (ps_version in ps_versions) {
                     def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-pwsh:$ps_version"
                     def image        = docker.build(imageWithTag, "-f Dockerfile-PS-$ps_version", "--build-arg PS_VERSION=$ps_version --build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
