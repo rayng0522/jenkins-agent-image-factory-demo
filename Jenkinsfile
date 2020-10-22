@@ -45,7 +45,7 @@ spec:
     PS_VERSION               = '7.0.1'
   }
   stages {
-    stage('Jenkins agent container factory') {
+    stage('Jenkins agent images factory') {
       stages {
         stage('Git Tag') {
           steps {
