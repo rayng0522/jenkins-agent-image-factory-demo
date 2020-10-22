@@ -41,7 +41,7 @@ spec:
     HTTPS_PROXY              = 'http://10.163.39.77:8080'
     NO_PROXY                 = 'intranet.asia,pru.intranet.asia'
     TERRAFORM_MINOR_VERSIONS = '0.11 0.12 0.13'
-    ANSIBLE_VERSION          = '2.7.5 2.8.0 2.9.0 2.10.0'
+    ANSIBLE_VERSIONS         = '2.7.5 2.9.0 2.10.0'
     PS_VERSION               = '7.0.1'
   }
   stages {
@@ -86,7 +86,7 @@ spec:
               dir('ansible') {
                 script {
                   def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-ansible:${env.GIT_TAG}"
-                  def image        = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSION=\"$ANSIBLE_VERSION\" .")
+                  def image        = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSIONS=\"$ANSIBLE_VERSIONS\" .")
                   image.push()
                 }
               }
