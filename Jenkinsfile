@@ -51,9 +51,11 @@ spec:
           steps {
             container('git') {
               script {
-                def gitTag  = sh(returnStdout: true, script: "git tag --sort version:refname | tail -1").trim()
-                env.GIT_TAG = gitTag
-                echo "${env.GIT_TAG}"
+                def gitTag         = sh(returnStdout: true, script: "git tag --sort version:refname | tail -1").trim()
+                def committerEmail = sh(returnStdout: true, script: 'git --no-pager show -s --format=\'%ae\'').trim()
+                env.GIT_TAG         = gitTag
+                env.COMMITTER_EMAIL = committerEmail
+                echo "tag version is ${env.GIT_TAG} and recipient email is ${env.COMMITTER_EMAIL}"
               }
             }
           }
@@ -123,12 +125,12 @@ spec:
   }
   post {
     success {
-      custom_email_notification("SUCCESSFUL", ["${env.RECIPIENT_EMAIL}"])
-      email_notification("SUCCESSFUL", ["${env.RECIPIENT_EMAIL}"])
+      custom_email_notification("SUCCESSFUL", ["${env.COMMITTER_EMAIL}"])
+      email_notification("SUCCESSFUL", ["${env.COMMITTER_EMAIL}"])
     }
     failure {
-      custom_email_notification("SUCCESSFUL", ["${env.RECIPIENT_EMAIL}"])
-      email_notification("FAIL", ["${env.RECIPIENT_EMAIL}"])
+      custom_email_notification("SUCCESSFUL", ["${env.COMMITTER_EMAIL}"])
+      email_notification("FAIL", ["${env.COMMITTER_EMAIL}"])
     }
   }
 }
