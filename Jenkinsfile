@@ -1,10 +1,10 @@
 #!groovy​
+@Library('jenkins_libraries')_
 
 pipeline {
   agent {
     kubernetes {
         label 'pod'
-        defaultContainer 'jnlp'
         yaml """
 apiVersion: v1
 kind: Pod
@@ -15,6 +15,12 @@ spec:
   containers:
   - name: "git"
     image: "alpine/git"
+    command:
+    - cat
+    tty: true
+    alwaysPullImage: true
+  - name: "az-cli"
+    image: "microsoft/azure-cli"
     command:
     - cat
     tty: true
@@ -72,7 +78,9 @@ spec:
             container('docker-builder') {
               dir('base') {
                 script {
-                  echo "hello"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-base:latest"
+                  def image        = docker.build(imageWithTag, "--build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
+                  image.push()
                 }
               }
             }
@@ -83,7 +91,9 @@ spec:
             container('docker-builder') {
               dir('ansible') {
                 script {
-                  echo "hello"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-ansible:${env.GIT_TAG}"
+                  def image        = docker.build(imageWithTag, "--build-arg ANSIBLE_VERSIONS=\"$ANSIBLE_VERSIONS\" .")
+                  image.push()
                 }
               }
             }
@@ -94,7 +104,9 @@ spec:
             container('docker-builder') {
               dir('terraform') {
                 script {
-                  echo "hello"
+                  def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-terraform:${env.GIT_TAG}"
+                  def image        = docker.build(imageWithTag, "--build-arg TERRAFORM_MINOR_VERSIONS=\"$TERRAFORM_MINOR_VERSIONS\" .")
+                  image.push()
                 }
               }
             }
@@ -105,10 +117,11 @@ spec:
             container('docker-builder') {
               dir('helper-script') {
                 script {
-                def ps_versions = ${PS_VERSIONS}.split(' ')
+                  def ps_versions = env.PS_VERSIONS.split(' ')
                   for (ps_version in ps_versions) {
+                    def dockerfile   = "Dockerfile-PS-${ps_version}"
                     def imageWithTag = "$DOCKER_REGISTRY_SERVER/jenkins-agent-pwsh:${ps_version}"
-                    def image        = docker.build(imageWithTag, "-f Dockerfile-PS-${ps_version}", "--build-arg PS_VERSION=${ps_version} --build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY .")
+                    def image        = docker.build(imageWithTag, "--build-arg PS_VERSION=${ps_version} --build-arg http_proxy=$HTTP_PROXY --build-arg https_proxy=$HTTPS_PROXY --build-arg no_proxy=$NO_PROXY -f ${dockerfile} .")
                     image.push()
                   }
                 }
@@ -116,7 +129,24 @@ spec:
             }
           }
         }
+        stage('Archive log to Azure Blob') {
+          steps {
+            container('az-cli') {
+                archive_log("jenkinsarchivelogs")
+            }
+          }
+        }
       }
+    }
+  }
+  post {
+    success {
+      custom_email_notification("SUCCESSFUL", ["${env.RECIPIENT_EMAIL}"])
+      email_notification("SUCCESSFUL", ["${env.RECIPIENT_EMAIL}"])
+    }
+    failure {
+      custom_email_notification("SUCCESSFUL", ["${env.RECIPIENT_EMAIL}"])
+      email_notification("FAIL", ["${env.RECIPIENT_EMAIL}"])
     }
   }
 }
